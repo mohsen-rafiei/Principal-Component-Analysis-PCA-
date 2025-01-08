@@ -1,0 +1,74 @@
+
+---
+title: "PCA Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+This document demonstrates how to perform Principal Component Analysis (PCA) on a dataset. PCA is a technique used to reduce dimensionality while preserving as much variance as possible.
+
+---
+
+## Step 1: Load the Data
+
+```{r load-data}
+# Load necessary libraries
+library(tidyverse)
+
+# Load the dataset (assuming it's in the same folder as this Rmd file)
+data <- read.csv("pca_data.csv")
+
+# Quick look at the data
+head(data)
+summary(data)
+```
+
+---
+
+## Step 2: Perform PCA
+
+```{r perform-pca}
+# Standardize the data
+data_scaled <- scale(data)
+
+# Perform PCA
+pca_model <- prcomp(data_scaled, center = TRUE, scale. = TRUE)
+
+# Summary of PCA
+summary(pca_model)
+
+# PCA loadings
+pca_model$rotation
+```
+
+---
+
+## Step 3: Visualize the Results
+
+```{r visualize-pca}
+# Load ggplot2 for visualization
+library(ggplot2)
+
+# Scree plot
+pca_var <- pca_model$sdev^2
+pca_var_explained <- pca_var / sum(pca_var)
+
+ggplot(data.frame(PC = 1:length(pca_var), Variance = pca_var_explained), aes(x = PC, y = Variance)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Scree Plot", x = "Principal Component", y = "Proportion of Variance Explained") +
+  theme_minimal()
+
+# Biplot
+biplot(pca_model, scale = 0)
+```
+
+---
+
+## Conclusion
+
+This document demonstrates PCA for dimensionality reduction and visualization. You can extend this workflow to analyze more complex datasets or compare PCA results across different datasets.
